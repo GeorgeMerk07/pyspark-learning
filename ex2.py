@@ -17,6 +17,10 @@ df = spark.read.csv("data/titanic.csv", header=True, inferSchema=True)
 missing_embarked = df.filter(F.col("Embarked").isNull()).count()
 print(f"Missing values in embarked: {missing_embarked}")
 
+#Second way: the missing Embarked values with SQL 
+df.createOrReplaceTempView("titanic")
+spark.sql("SELECT COUNT(*) AS missing_embarked FROM titanic WHERE Embarked IS NULL").show()
+
 #2. Find the most common 'Embarked' value (mode)
 most_common_row = df.groupBy("Embarked").count().orderBy(F.col("count").desc()).first()
 most_commoon_embarked = most_common_row["Embarked"] if most_common_row else None
